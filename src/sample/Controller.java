@@ -15,6 +15,7 @@ public class Controller {
     public static String formula = "";
     public int strCnt=0;
     public Button b;
+    public boolean digitLock=false;
 
     ScriptEngineManager manager = new ScriptEngineManager();
     ScriptEngine engine = manager.getEngineByName("js");
@@ -31,25 +32,32 @@ public class Controller {
 
     @FXML
     void Digit(ActionEvent event) {
-
-        Button b = (Button)event.getSource();
-        if(strCnt==0&& b.getText().equals("0"));
-        else{
-            formula += b.getText();
-            textField.setText(formula);
-            strCnt++;
+        if(digitLock==false) {
+            digitLock=true;//処理が始まったらロック。
+            Button b = (Button) event.getSource();
+            if (strCnt == 0 && b.getText().equals("0")) ;
+            else {
+                formula += b.getText();
+                textField.setText(formula);
+                strCnt++;
+            }
+            digitLock=false;//しょりが終わったらロック解除。
         }
     }
 
     @FXML
     void Equal(ActionEvent event) throws ScriptException {
-        if(!(formula.endsWith("+")||formula.endsWith("-")||formula.endsWith("×")||formula.endsWith("÷")||formula.endsWith("."))) {
+        try {
+            if (!(formula.endsWith("+") || formula.endsWith("-") || formula.endsWith("×") || formula.endsWith("÷") || formula.endsWith("."))) {
 
-            formula = formula.replace("×", "*");
-            formula = formula.replace("÷", "/");
-            formula = engine.eval(formula).toString();
-            strCnt = formula.length();
-            textField.setText(formula);
+                formula = formula.replace("×", "*");
+                formula = formula.replace("÷", "/");
+                formula = engine.eval(formula).toString();
+                strCnt = formula.length();
+                textField.setText(formula);
+
+            }
+        }catch (Exception ec){
 
         }
     }
